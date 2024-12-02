@@ -15,7 +15,13 @@
         height: 100vh;
         background: linear-gradient(to bottom, #f7f9fc, #dde9f5);
       }
-
+      .wrapper {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+      }
       #arrow {
         position: absolute;
         top: -20px;
@@ -29,7 +35,19 @@
         z-index: 2;
       }
 
+      #result {
+        margin-top: 15px;
+        text-align: center;
+        width: 100%;
+        height: 40px;
+        font-size: 38px;
+        margin-bottom: 35px;
+        color: #333;
+        font-weight: bold;
+      }
+
       .container {
+        position: relative;
         display: flex;
         gap: 80px;
         align-items: center;
@@ -38,8 +56,8 @@
 
       #wheel-container {
         position: relative;
-        width: 90vmin; /* Задаємо ширину 90% від менше між шириною та висотою вьюпорта */
-        height: 90vmin; /* Задаємо висоту 90% від менше між шириною та висотою вьюпорта */
+        width: 75vmin; /* Задаємо ширину 90% від менше між шириною та висотою вьюпорта */
+        height: 75vmin; /* Задаємо висоту 90% від менше між шириною та висотою вьюпорта */
       }
 
       #wheel {
@@ -82,22 +100,25 @@
     </style>
   </head>
   <body>
-    <div class="container">
-      <div id="controls">
-        <textarea
-          id="sectors"
-          placeholder="Введіть текст секторів, один на рядок"
-        ></textarea>
-        <button id="updateWheel">Оновити колесо</button>
-        <button id="spinWheel">Обертати колесо</button>
-      </div>
-      <div id="wheel-container">
-        <div id="arrow"></div>
-        <svg
-          id="wheel"
-          viewBox="0 0 200 200"
-          xmlns="http://www.w3.org/2000/svg"
-        ></svg>
+    <div class="wrapper">
+      <div id="result"></div>
+      <div class="container">
+        <div id="controls">
+          <textarea
+            id="sectors"
+            placeholder="Введіть текст секторів, один на рядок"
+          ></textarea>
+          <button id="updateWheel">Оновити колесо</button>
+          <button id="spinWheel">Обертати колесо</button>
+        </div>
+        <div id="wheel-container">
+          <div id="arrow"></div>
+          <svg
+            id="wheel"
+            viewBox="0 0 200 200"
+            xmlns="http://www.w3.org/2000/svg"
+          ></svg>
+        </div>
       </div>
     </div>
     <script>
@@ -105,6 +126,7 @@
       const updateWheelBtn = document.getElementById("updateWheel");
       const spinWheelBtn = document.getElementById("spinWheel");
       const sectorsTextarea = document.getElementById("sectors");
+      const resultBox = document.getElementById("result");
 
       let sectors = [];
 
@@ -138,6 +160,7 @@
       let currentRotation = 0;
       let currentSectorIndex = 0;
       let firstSpin = true;
+      let sectorNumber = 0;
 
       spinWheelBtn.addEventListener("click", () => {
         if (sectors.length === 0) {
@@ -158,24 +181,18 @@
             fullRotations +
             (360 / sectors.length) * (sectors.length - 1);
         }
-        // Обчислюємо кут для поточного обертання
-        //const targetRotation = currentRotation + fullRotations + currentSectorIndex * sectorAngle;
-
-        // Змінюємо поточний кут обертання
         currentRotation = targetRotation;
-
-        // Логування для перевірки
-        console.log(
-          `Обертання на ${targetRotation} градусів, сектор ${
-            currentSectorIndex + 1
-          }`
-        );
 
         // Обертаємо колесо
         wheel.style.transform = `rotate(${currentRotation}deg)`;
 
-        // Обробляємо наступний сектор
-        //currentSectorIndex = (currentSectorIndex + 1) % sectors.length;
+        setTimeout(() => {
+          resultBox.textContent = sectors[sectorNumber];
+          sectorNumber += 1;
+          if (sectorNumber == sectors.length) {
+            sectorNumber = 0;
+          }
+        }, 4000);
       });
 
       // Функція для створення колеса
@@ -219,7 +236,7 @@
           textEl.setAttribute("y", textY);
           textEl.setAttribute("text-anchor", "middle");
           textEl.setAttribute("dominant-baseline", "middle");
-          textEl.setAttribute("font-size", "10px");
+          textEl.setAttribute("font-size", "4px");
           textEl.setAttribute(
             "transform",
             `rotate(${textAngle}, ${textX}, ${textY})`
