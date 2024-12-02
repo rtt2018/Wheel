@@ -16,6 +16,7 @@
         background: linear-gradient(to bottom, #f7f9fc, #dde9f5);
       }
       .wrapper {
+        position: relative;
         display: flex;
         flex-direction: column;
         width: 100%;
@@ -36,12 +37,12 @@
       }
 
       #result {
-        margin-top: 15px;
+        margin-top: 30px;
         text-align: center;
         width: 100%;
         height: 40px;
         font-size: 38px;
-        margin-bottom: 35px;
+        margin-bottom: 70px;
         color: #333;
         font-weight: bold;
       }
@@ -66,12 +67,34 @@
         width: 100%; /* Колесо займає всю ширину контейнера */
         height: 100%; /* Колесо займає всю висоту контейнера */
       }
+      .spring {
+        flex-grow: 3;
+        width: 100%;
+        height: 20px;
+        margin-bottom: 50vmin;
+      }
+
+      .left-border {
+        height: 100%;
+        width: 20px;
+        margin-right: 20px;
+      }
+
+      .rigth-border {
+        height: 100%;
+        width: 10px;
+      }
 
       #controls {
+        position: absolute;
+        left: 20px;
+        bottom: 20px;
         display: flex;
         flex-direction: column;
         gap: 10px;
         max-width: 300px;
+        margin-right: 20px;
+        z-index: 50;
       }
 
       textarea {
@@ -101,16 +124,18 @@
   </head>
   <body>
     <div class="wrapper">
+      <div id="controls">
+        <div class="spring"></div>
+        <button id="spinWheel">Обертати колесо</button>
+        <button id="updateWheel">Оновити колесо</button>
+        <textarea
+          id="sectors"
+          placeholder="Введіть текст секторів, один на рядок"
+        ></textarea>
+      </div>
       <div id="result"></div>
       <div class="container">
-        <div id="controls">
-          <textarea
-            id="sectors"
-            placeholder="Введіть текст секторів, один на рядок"
-          ></textarea>
-          <button id="updateWheel">Оновити колесо</button>
-          <button id="spinWheel">Обертати колесо</button>
-        </div>
+        <div class="left-border"></div>
         <div id="wheel-container">
           <div id="arrow"></div>
           <svg
@@ -119,6 +144,7 @@
             xmlns="http://www.w3.org/2000/svg"
           ></svg>
         </div>
+        <!-- <div class="rigth-border"></div> -->
       </div>
     </div>
     <script>
