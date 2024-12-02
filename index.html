@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Обертання колеса</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        background: linear-gradient(to bottom, #f7f9fc, #dde9f5);
+      }
+
+      #arrow {
+        position: absolute;
+        top: -20px;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-left: 10px solid transparent;
+        border-right: 10px solid transparent;
+        border-bottom: 20px solid #ff0000;
+        transform: translateX(-50%);
+        transform: rotatex(180deg);
+        z-index: 2;
+      }
+
+      .container {
+        display: flex;
+        gap: 80px;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #wheel-container {
+        position: relative;
+        width: 60vmin;
+        height: 60vmin;
+      }
+
+      #wheel {
+        transform: rotate(0deg);
+        transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      #controls {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 300px;
+      }
+
+      textarea {
+        /* width: 100%; */
+        height: 150px;
+        resize: none;
+        border: 2px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        font-size: 1rem;
+      }
+
+      button {
+        padding: 10px;
+        font-size: 1rem;
+        color: white;
+        background: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      button:hover {
+        background: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="controls">
+        <textarea
+          id="sectors"
+          placeholder="Введіть текст секторів, один на рядок"
+        ></textarea>
+        <button id="updateWheel">Оновити колесо</button>
+        <button id="spinWheel">Обертати колесо</button>
+      </div>
+      <div id="wheel-container">
+        <div id="arrow"></div>
+        <svg
+          id="wheel"
+          viewBox="0 0 200 200"
+          xmlns="http://www.w3.org/2000/svg"
+        ></svg>
+      </div>
+    </div>
+    <script>
+      const wheel = document.getElementById("wheel");
+      const updateWheelBtn = document.getElementById("updateWheel");
+      const spinWheelBtn = document.getElementById("spinWheel");
+      const sectorsTextarea = document.getElementById("sectors");
+
+      let sectors = [];
+
+      // Фіксовані кольори
+      const colors = [
+        "red",
+        "blue",
+        "green",
+        "yellow",
+        "purple",
+        "orange",
+        "pink",
+        "teal",
+        "lime",
+        "brown",
+      ];
+
+      // Оновлення колеса при зміні тексту
+      updateWheelBtn.addEventListener("click", () => {
+        const text = sectorsTextarea.value.trim();
+        sectors = text
+          .split("\n")
+          .filter((line) => line.trim() !== "")
+          .slice(0, 10); // Максимум 10 секторів
+        currentSectorIndex = 0;
+        drawWheel();
+      });
+
+      // Обертання колеса
+
+      let currentRotation = 0;
+      let currentSectorIndex = 0;
+      let firstSpin = true;
+
+      spinWheelBtn.addEventListener("click", () => {
+        if (sectors.length === 0) {
+          alert("Додайте хоча б один сектор.");
+          return;
+        }
+
+        const sectorAngle = 360 / sectors.length;
+
+        // Мінімум 5 обертів і вибір наступного сектору
+        const fullRotations = 360 * 5; // 5 обертів
+        if (firstSpin) {
+          firstSpin = false;
+          targetRotation = fullRotations + (270 - sectorAngle / 2);
+        } else {
+          targetRotation =
+            currentRotation +
+            fullRotations +
+            (360 / sectors.length) * (sectors.length - 1);
+        }
+        // Обчислюємо кут для поточного обертання
+        //const targetRotation = currentRotation + fullRotations + currentSectorIndex * sectorAngle;
+
+        // Змінюємо поточний кут обертання
+        currentRotation = targetRotation;
+
+        // Обробляємо наступний сектор
+        //currentSectorIndex = (currentSectorIndex + 1) % sectors.length;
+
+        // Обертаємо колесо
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        // Логування для перевірки
+        console.log(
+          `Обертання на ${targetRotation} градусів, сектор ${
+            currentSectorIndex + 1
+          }`
+        );
+      });
+
+      // Функція для створення колеса
+      function drawWheel() {
+        const totalSectors = sectors.length;
+        const sectorAngle = 360 / totalSectors;
+
+        wheel.innerHTML = ""; // Очищення попередніх секторів
+
+        sectors.forEach((text, index) => {
+          const startAngle = index * sectorAngle;
+          const endAngle = startAngle + sectorAngle;
+          const largeArcFlag = sectorAngle > 180 ? 1 : 0;
+
+          const x1 = 100 + 100 * Math.cos((Math.PI * startAngle) / 180);
+          const y1 = 100 + 100 * Math.sin((Math.PI * startAngle) / 180);
+          const x2 = 100 + 100 * Math.cos((Math.PI * endAngle) / 180);
+          const y2 = 100 + 100 * Math.sin((Math.PI * endAngle) / 180);
+
+          // Створення сектора
+          const path = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+          path.setAttribute(
+            "d",
+            `M100,100 L${x1},${y1} A100,100 0 ${largeArcFlag},1 ${x2},${y2} Z`
+          );
+          path.setAttribute("fill", colors[index % colors.length]);
+
+          // Текст сектора
+          const textEl = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+          );
+          const textAngle = startAngle + sectorAngle / 2;
+          const textX = 100 + 70 * Math.cos((Math.PI * textAngle) / 180);
+          const textY = 100 + 70 * Math.sin((Math.PI * textAngle) / 180);
+
+          textEl.setAttribute("x", textX);
+          textEl.setAttribute("y", textY);
+          textEl.setAttribute("text-anchor", "middle");
+          textEl.setAttribute("dominant-baseline", "middle");
+          textEl.setAttribute("font-size", "10px");
+          textEl.setAttribute(
+            "transform",
+            `rotate(${textAngle}, ${textX}, ${textY})`
+          );
+          textEl.setAttribute("fill", "black");
+          textEl.textContent = text;
+
+          // Додавання елементів до колеса
+          wheel.appendChild(path);
+          wheel.appendChild(textEl);
+        });
+      }
+
+      // Ініціалізація
+      drawWheel();
+    </script>
+  </body>
+</html>
