@@ -25,8 +25,7 @@
         border-left: 10px solid transparent;
         border-right: 10px solid transparent;
         border-bottom: 20px solid #ff0000;
-        transform: translateX(-50%);
-        transform: rotatex(180deg);
+        transform: translateX(-50%) rotate(180deg);
         z-index: 2;
       }
 
@@ -39,13 +38,15 @@
 
       #wheel-container {
         position: relative;
-        width: 60vmin;
-        height: 60vmin;
+        width: 90vmin; /* Задаємо ширину 90% від менше між шириною та висотою вьюпорта */
+        height: 90vmin; /* Задаємо висоту 90% від менше між шириною та висотою вьюпорта */
       }
 
       #wheel {
         transform: rotate(0deg);
         transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+        width: 100%; /* Колесо займає всю ширину контейнера */
+        height: 100%; /* Колесо займає всю висоту контейнера */
       }
 
       #controls {
@@ -56,7 +57,6 @@
       }
 
       textarea {
-        /* width: 100%; */
         height: 150px;
         resize: none;
         border: 2px solid #ccc;
@@ -164,18 +164,18 @@
         // Змінюємо поточний кут обертання
         currentRotation = targetRotation;
 
-        // Обробляємо наступний сектор
-        //currentSectorIndex = (currentSectorIndex + 1) % sectors.length;
-
-        // Обертаємо колесо
-        wheel.style.transform = `rotate(${currentRotation}deg)`;
-
         // Логування для перевірки
         console.log(
           `Обертання на ${targetRotation} градусів, сектор ${
             currentSectorIndex + 1
           }`
         );
+
+        // Обертаємо колесо
+        wheel.style.transform = `rotate(${currentRotation}deg)`;
+
+        // Обробляємо наступний сектор
+        //currentSectorIndex = (currentSectorIndex + 1) % sectors.length;
       });
 
       // Функція для створення колеса
