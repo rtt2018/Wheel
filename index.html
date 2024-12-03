@@ -63,7 +63,7 @@
 
       #wheel {
         transform: rotate(0deg);
-        transition: transform 4s cubic-bezier(0.23, 1, 0.32, 1);
+        transition: transform 5s cubic-bezier(0.23, 1, 0.32, 1);
         width: 100%; /* Колесо займає всю ширину контейнера */
         height: 100%; /* Колесо займає всю висоту контейнера */
       }
@@ -147,6 +147,7 @@
         <!-- <div class="rigth-border"></div> -->
       </div>
     </div>
+    <audio id="spinSound" src="drum-roll-2-228358.mp3"></audio>
     <script>
       const wheel = document.getElementById("wheel");
       const updateWheelBtn = document.getElementById("updateWheel");
@@ -194,10 +195,14 @@
           return;
         }
 
+        const spinSound = document.getElementById("spinSound");
+        spinSound.currentTime = 0; // Скидає програвання до початку
+        spinSound.play();
+
         const sectorAngle = 360 / sectors.length;
 
         // Мінімум 5 обертів і вибір наступного сектору
-        const fullRotations = 360 * 5; // 5 обертів
+        const fullRotations = 360 * 10; // 5 обертів
         if (firstSpin) {
           firstSpin = false;
           targetRotation = fullRotations + (270 - sectorAngle / 2);
@@ -218,7 +223,8 @@
           if (sectorNumber == sectors.length) {
             sectorNumber = 0;
           }
-        }, 4000);
+          spinSound.pause(); // Зупиняємо звук
+        }, 5000);
       });
 
       // Функція для створення колеса
